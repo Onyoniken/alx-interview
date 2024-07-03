@@ -21,7 +21,7 @@ def canUnlockAll(boxes):
             return False
         copyBoxes[key].append(-1)
         for new_key in copyBoxes[key]:
-            if new_key is -1:
+            if new_key == -1:
                 continue
             if new_key >= len(copyBoxes):
                 continue
