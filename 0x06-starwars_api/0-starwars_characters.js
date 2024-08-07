@@ -1,32 +1,31 @@
 #!/usr/bin/node
 
-const { exit } = require('process');
 const request = require('request');
-const url = 'https://swapi-api.hbtn.io/api/films/';
-const argument = process.argv[2];
 
-if (argument === undefined) {
-  exit();
-}
+const movieId = process.argv[2];
+const movieEndpoint = 'https://swapi-api.alx-tools.com/api/films/' + movieId;
 
-request(url + argument, (error, response, body) => {
-  if (!error) {
-    const chars = JSON.parse(body).characters;
-    orderPrinter(chars, 0);
-  } else {
-    console.log(error);
+function sendRequest (characterList, index) {
+  if (characterList.length === index) {
+    return;
   }
-});
 
-function orderPrinter (chars, n) {
-  if (n === chars.length) { return; }
-  request(chars[n], (error, response, body) => {
-    if (!error) {
-      const name = JSON.parse(body).name;
-      console.log(name);
-      orderPrinter(chars, n + 1);
+  request(characterList[index], (error, response, body) => {
+    if (error) {
+      console.log(error);
     } else {
-      console.log('error:', error);
+      console.log(JSON.parse(body).name);
+      sendRequest(characterList, index + 1);
     }
   });
 }
+
+request(movieEndpoint, (error, response, body) => {
+  if (error) {
+    console.log(error);
+  } else {
+    const characterList = JSON.parse(body).characters;
+
+    sendRequest(characterList, 0);
+  }
+});
